@@ -1,242 +1,124 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-user-select: none;
-    user-select: none;
+const startContainer = document.getElementById('start-container');
+const startBtn = document.getElementById('start-btn');
+const gameContainer = document.getElementById('game-container');
+const gameArea = document.getElementById('game-area');
+const scoreDisplay = document.getElementById('score');
+const cardContainer = document.getElementById('card-container');
+const celebrateBtn = document.getElementById('celebrate-btn');
+
+let score = 0;
+const targetScore = 5;
+const colors = ['#ff5e7e', '#38ef7d', '#11998e', '#ff9f43', '#00d2d3'];
+let gameInterval;
+let gameStarted = false;
+
+// --- KONFIGURASI AUDIO ---
+const bgMusic = new Audio('https://assets.mixkit.co/active_storage/sfx/123/123-animated.wav'); 
+bgMusic.loop = true; 
+bgMusic.volume = 0.4; 
+
+const popSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-animated.wav');
+popSound.volume = 1.0; 
+
+function startGame() {
+    if (gameStarted) return;
+    gameStarted = true;
+
+    bgMusic.play().catch(error => console.log("Audio tertunda:", error));
+
+    // Slide up layar arcade pembuka
+    startContainer.classList.add('slide-up');
+    gameContainer.classList.remove('hidden');
+
+    setTimeout(() => {
+        gameInterval = setInterval(createBalloon, 1200);
+    }, 600);
 }
 
-body, html {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #051605; /* Dasar gelap untuk transisi arcade */
-}
+startBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startGame();
+});
+startBtn.addEventListener('click', startGame);
 
-/* --- STYLE LAYAR ARCADE RETRO (START SCREEN) --- */
-#start-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #0a1f0a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
-}
+function createBalloon() {
+    if (score >= targetScore) {
+        clearInterval(gameInterval);
+        return;
+    }
 
-.arcade-screen {
-    width: 90%;
-    max-width: 400px;
-    height: 80%;
-    max-height: 500px;
-    background: #33ff33;
-    border-radius: 30px;
-    box-shadow: 0 0 40px rgba(51, 255, 51, 0.6), inset 0 0 20px rgba(0,0,0,0.4);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    font-family: 'Press Start 2P', monospace;
-}
-
-.arcade-text {
-    color: #051605;
-    font-size: 2.2rem;
-    line-height: 1.5;
-    text-align: left;
-    width: 100%;
-    padding-left: 15px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-#start-btn {
-    position: absolute;
-    right: 35px;
-    top: 48%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: #051605;
-    font-size: 4.5rem;
-    font-family: 'Press Start 2P', monospace;
-    cursor: pointer;
-    font-weight: bold;
-    animation: blink 0.8s infinite alternate;
-}
-
-@keyframes blink {
-    0% { opacity: 0.2; }
-    100% { opacity: 1; }
-}
-
-#start-container.slide-up {
-    transform: translateY(-100%);
-}
-
-/* --- PERBAIKAN POSISI TENAH (CENTERING) & LATAR PERMEN --- */
-#game-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    const balloon = document.createElement('div');
+    balloon.classList.add('balloon');
     
-    /* Mengembalikan paksa posisi elemen ke tengah layar */
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important; /* Papan skor mulai dari atas, tapi tetap di tengah horizontal */
+    const randomX = Math.random() * (window.innerWidth - 70);
+    balloon.style.left = `${randomX}px`;
     
-    /* Latar belakang warna pink pastel permen */
-    background-color: #fce4ec; 
-    
-    /* Pola permen piksel abstrak warna-warni */
-    background-image: 
-        radial-gradient(#ff85a2 20%, transparent 20%),
-        radial-gradient(#b3e5fc 20%, transparent 20%),
-        radial-gradient(#ffe082 20%, transparent 20%),
-        radial-gradient(#c8e6c9 20%, transparent 20%);
-    background-size: 40px 40px;
-    background-position: 0 0, 20px 20px, 10px 30px, 30px 10px;
-    image-rendering: pixelated;
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    balloon.style.backgroundColor = randomColor;
+
+    const randomSpeed = 3 + Math.random() * 3;
+    balloon.style.animationDuration = `${randomSpeed}s`;
+
+    balloon.addEventListener('touchstart', (e) => {
+        e.preventDefault(); 
+        popBalloon(balloon, randomX, balloon.offsetTop, randomColor);
+    });
+    balloon.addEventListener('mousedown', () => {
+        popBalloon(balloon, randomX, balloon.offsetTop, randomColor);
+    });
+
+    gameArea.appendChild(balloon);
+
+    balloon.addEventListener('animationend', () => {
+        balloon.remove();
+    });
 }
 
-/* Merapikan posisi papan skor di tengah atas */
-#score-board {
-    position: relative;
-    margin-top: 25px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #333;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    z-index: 5;
-    text-align: center;
+function createParticles(x, y, color) {
+    const particleCount = 12;
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.style.backgroundColor = color;
+        particle.style.left = `${x + 30}px`; 
+        particle.style.top = `${y + 35}px`;
+
+        const destinationX = (Math.random() - 0.5) * 200 + 'px';
+        const destinationY = (Math.random() - 0.5) * 200 + 'px';
+        particle.style.setProperty('--x', destinationX);
+        particle.style.setProperty('--y', destinationY);
+
+        gameArea.appendChild(particle);
+
+        particle.addEventListener('animationend', () => {
+            particle.remove();
+        });
+    }
 }
 
-/* Merapikan posisi teks instruksi di tengah atas */
-#instruction {
-    position: relative;
-    margin-top: 10px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #555;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 6px 16px;
-    border-radius: 10px;
-    text-align: center;
-    z-index: 5;
+function popBalloon(balloon, x, y, color) {
+    popSound.currentTime = 0; 
+    popSound.play();
+
+    const currentY = balloon.getBoundingClientRect().top;
+    createParticles(x, currentY, color);
+
+    balloon.remove();
+    score++;
+    scoreDisplay.textContent = score;
+
+    if (score >= targetScore) {
+        setTimeout(endGame, 500);
+    }
 }
 
-#game-area {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
+function endGame() {
+    gameContainer.classList.add('hidden');
+    cardContainer.classList.remove('hidden');
+    bgMusic.volume = 0.2; 
 }
 
-/* --- ELEMEN BALON --- */
-.balloon {
-    width: 60px;
-    height: 75px;
-    background: #ff5e7e;
-    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-    position: absolute;
-    bottom: -100px;
-    cursor: pointer;
-    animation: floatUp 4s linear forwards;
-}
-
-.balloon::after {
-    content: "";
-    position: absolute;
-    bottom: -12px;
-    left: 28px;
-    width: 2px;
-    height: 15px;
-    background: #888;
-}
-
-@keyframes floatUp {
-    0% { bottom: -100px; transform: translateX(0); }
-    50% { transform: translateX(15px); }
-    100% { bottom: 105%; transform: translateX(-15px); }
-}
-
-/* --- ELEMEN PARTIKEL PECAH --- */
-.particle {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: explode 0.6s ease-out forwards;
-}
-
-@keyframes explode {
-    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
-}
-
-/* --- REVISI LAYAR KARTU UCAPAN (PASTIKAN DITENGAH) --- */
-#card-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    z-index: 200;
-    
-    /* Mengembalikan paksa posisi kartu ucapan tepat di tengah layar HP */
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    opacity: 1;
-    transition: opacity 0.5s ease;
-}
-
-.card {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    width: 85%;
-    max-width: 350px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-.card h2 { color: #ff5e7e; margin-bottom: 15px; }
-.card p { color: #666; line-height: 1.6; margin-bottom: 20px; }
-
-#celebrate-btn {
-    background: #ff5e7e;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 1rem;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.hidden {
-    display: none !important;
-}
+celebrateBtn.addEventListener('click', () => {
+    celebrateBtn.textContent = "Terima Kasih! ❤️ by Alip Jaya";
+    celebrateBtn.style.background = "#38ef7d";
+});
