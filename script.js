@@ -1,6 +1,8 @@
+const startContainer = document.getElementById('start-container');
+const startBtn = document.getElementById('start-btn');
+const gameContainer = document.getElementById('game-container');
 const gameArea = document.getElementById('game-area');
 const scoreDisplay = document.getElementById('score');
-const gameContainer = document.getElementById('game-container');
 const cardContainer = document.getElementById('card-container');
 const celebrateBtn = document.getElementById('celebrate-btn');
 
@@ -8,7 +10,7 @@ let score = 0;
 const targetScore = 5;
 const colors = ['#ff5e7e', '#38ef7d', '#11998e', '#ff9f43', '#00d2d3'];
 let gameInterval;
-let audioStarted = false;
+let gameStarted = false;
 
 // --- KONFIGURASI AUDIO ---
 const bgMusic = new Audio('https://assets.mixkit.co/active_storage/sfx/123/123-animated.wav'); 
@@ -18,12 +20,30 @@ bgMusic.volume = 0.4;
 const popSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-animated.wav');
 popSound.volume = 1.0; 
 
-function startAudio() {
-    if (!audioStarted) {
-        bgMusic.play().catch(error => console.log("Audio play digagalkan:", error));
-        audioStarted = true;
-    }
+// Fungsi Utama Memulai Game dari Tombol Panah Retro
+function startGame() {
+    if (gameStarted) return;
+    gameStarted = true;
+
+    // 1. Putar Musik Latar Belakang (Lolos sensor blokir browser HP)
+    bgMusic.play().catch(error => console.log("Audio otomatis tertunda:", error));
+
+    // 2. Sembunyikan Layar Arcade dengan Efek Slide Up
+    startContainer.classList.add('slide-up');
+    gameContainer.classList.remove('hidden');
+
+    // 3. Mulai Munculkan Balon Game
+    setTimeout(() => {
+        gameInterval = setInterval(createBalloon, 1200);
+    }, 600);
 }
+
+// Event listener klik tombol panah retro (Mendukung sentuhan HP & klik mouse)
+startBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startGame();
+});
+startBtn.addEventListener('click', startGame);
 
 function createBalloon() {
     if (score >= targetScore) {
@@ -45,11 +65,9 @@ function createBalloon() {
 
     balloon.addEventListener('touchstart', (e) => {
         e.preventDefault(); 
-        startAudio(); 
         popBalloon(balloon, randomX, balloon.offsetTop, randomColor);
     });
     balloon.addEventListener('mousedown', () => {
-        startAudio(); 
         popBalloon(balloon, randomX, balloon.offsetTop, randomColor);
     });
 
@@ -60,19 +78,15 @@ function createBalloon() {
     });
 }
 
-// --- FUNGSI EFEK VISUAL PARTIKEL PECAH ---
 function createParticles(x, y, color) {
-    const particleCount = 12; // Jumlah serpihan per balon
+    const particleCount = 12;
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.classList.add('particle');
         particle.style.backgroundColor = color;
-        
-        // Posisikan serpihan di tengah-tengah balon yang pecah
         particle.style.left = `${x + 30}px`; 
         particle.style.top = `${y + 35}px`;
 
-        // Tentukan arah terbang acak (X dan Y) menggunakan CSS Variables
         const destinationX = (Math.random() - 0.5) * 200 + 'px';
         const destinationY = (Math.random() - 0.5) * 200 + 'px';
         particle.style.setProperty('--x', destinationX);
@@ -80,7 +94,6 @@ function createParticles(x, y, color) {
 
         gameArea.appendChild(particle);
 
-        // Hapus partikel setelah animasinya selesai (0.6 detik)
         particle.addEventListener('animationend', () => {
             particle.remove();
         });
@@ -88,16 +101,12 @@ function createParticles(x, y, color) {
 }
 
 function popBalloon(balloon, x, y, color) {
-    // 1. Mainkan Suara
     popSound.currentTime = 0; 
     popSound.play();
 
-    // 2. Munculkan Efek Visual Serpihan
-    // Menggunakan letak koordinat balon saat ini di layar HP
     const currentY = balloon.getBoundingClientRect().top;
     createParticles(x, currentY, color);
 
-    // 3. Hapus Balon & Update Skor
     balloon.remove();
     score++;
     scoreDisplay.textContent = score;
@@ -117,8 +126,3 @@ celebrateBtn.addEventListener('click', () => {
     celebrateBtn.textContent = "Terima Kasih! ❤️";
     celebrateBtn.style.background = "#38ef7d";
 });
-
-gameContainer.addEventListener('touchstart', startAudio);
-gameContainer.addEventListener('mousedown', startAudio);
-
-gameInterval = setInterval(createBalloon, 1200);
