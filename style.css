@@ -84,16 +84,24 @@ body, html {
 }
 
 /* --- GAME AREA STYLE --- */
-#game-container, #card-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+#game-container {
+    /* Mengubah latar belakang menjadi warna pastel langit permen */
+    background-color: #fce4ec; 
+    
+    /* Membuat pola permen piksel abstrak menggunakan CSS Pola Gradien */
+    background-image: 
+        radial-gradient(#ff85a2 20%, transparent 20%),
+        radial-gradient(#b3e5fc 20%, transparent 20%),
+        radial-gradient(#ffe082 20%, transparent 20%),
+        radial-gradient(#c8e6c9 20%, transparent 20%);
+    
+    /* Mengatur ukuran penyebaran pola abstrak */
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px, 15px 45px, 45px 15px;
+    
+    /* Efek pikselasi retro agar tidak blur di layar HP */
+    image-rendering: pixelated; 
+    z-index: 1;
 }
 
 #game-container {
