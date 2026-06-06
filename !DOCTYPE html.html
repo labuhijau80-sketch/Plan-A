@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kartu Ucapan Interaktif</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Layar Game -->
+  <div id="game-container">
+    <div id="score-board">Balon Terpecah: <span id="score">0</span>/5</div>
+    <div id="instruction">Ketuk 5 balon untuk membuka ucapan!</div>
+    <div id="game-area"></div>
+  </div>
+
+  <!-- Layar Kartu Ucapan (Terbuka setelah game selesai) -->
+  <div id="card-container" class="hidden">
+    <div class="card">
+      <h2>🎉 Selamat Ulang Tahun! 🎉</h2>
+      <p>Semoga di usia yang baru ini, kamu selalu diberikan kesehatan, kebahagiaan, dan kesuksesan dalam segala hal yang kamu impikan.</p>
+      <button id="celebrate-btn">Tiup Lilin! 🎂</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
