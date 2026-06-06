@@ -20,25 +20,21 @@ bgMusic.volume = 0.4;
 const popSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-animated.wav');
 popSound.volume = 1.0; 
 
-// Fungsi Utama Memulai Game dari Tombol Panah Retro
 function startGame() {
     if (gameStarted) return;
     gameStarted = true;
 
-    // 1. Putar Musik Latar Belakang (Lolos sensor blokir browser HP)
-    bgMusic.play().catch(error => console.log("Audio otomatis tertunda:", error));
+    bgMusic.play().catch(error => console.log("Audio tertunda:", error));
 
-    // 2. Sembunyikan Layar Arcade dengan Efek Slide Up
+    // Slide up layar arcade pembuka
     startContainer.classList.add('slide-up');
     gameContainer.classList.remove('hidden');
 
-    // 3. Mulai Munculkan Balon Game
     setTimeout(() => {
         gameInterval = setInterval(createBalloon, 1200);
     }, 600);
 }
 
-// Event listener klik tombol panah retro (Mendukung sentuhan HP & klik mouse)
 startBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
     startGame();
