@@ -28,7 +28,13 @@ body, html {
 }
 
 #game-container {
-    background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+    /* Masukkan Raw URL GitHub Anda di dalam tanda kutip tunggal di bawah ini */
+    background-image: url('https://raw.githubusercontent.com/username/repository/main/folder/gambar.png');
+    
+    /* Pengaturan agar wallpaper rapi dan memenuhi layar game */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 #score-board {
