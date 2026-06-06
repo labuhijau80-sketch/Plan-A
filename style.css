@@ -11,7 +11,7 @@ body, html {
     height: 100%;
     overflow: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #051605; /* Dasar gelap arcade */
+    background: #051605; /* Dasar gelap untuk transisi arcade */
 }
 
 /* --- STYLE LAYAR ARCADE RETRO (START SCREEN) --- */
@@ -34,7 +34,7 @@ body, html {
     max-width: 400px;
     height: 80%;
     max-height: 500px;
-    background: #33ff33; /* Warna hijau neon terang sesuai gambar */
+    background: #33ff33;
     border-radius: 30px;
     box-shadow: 0 0 40px rgba(51, 255, 51, 0.6), inset 0 0 20px rgba(0,0,0,0.4);
     display: flex;
@@ -44,7 +44,7 @@ body, html {
     padding: 20px;
     box-sizing: border-box;
     position: relative;
-    font-family: 'Press Start 2P', monospace; /* Menggunakan fon pixel */
+    font-family: 'Press Start 2P', monospace;
 }
 
 .arcade-text {
@@ -78,63 +78,74 @@ body, html {
     100% { opacity: 1; }
 }
 
-/* --- SCREEN TRANSITION EFFECT --- */
 #start-container.slide-up {
     transform: translateY(-100%);
 }
 
-/* --- GAME AREA STYLE --- */
+/* --- REVISI TAMPILAN AREA GAME & LATAR PERMEN --- */
 #game-container {
-    /* Mengubah latar belakang menjadi warna pastel langit permen */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    
+    /* Latar belakang warna pink pastel permen */
     background-color: #fce4ec; 
     
-    /* Membuat pola permen piksel abstrak menggunakan CSS Pola Gradien */
+    /* Pola permen piksel abstrak warna-warni */
     background-image: 
         radial-gradient(#ff85a2 20%, transparent 20%),
         radial-gradient(#b3e5fc 20%, transparent 20%),
         radial-gradient(#ffe082 20%, transparent 20%),
         radial-gradient(#c8e6c9 20%, transparent 20%);
-    
-    /* Mengatur ukuran penyebaran pola abstrak */
-    background-size: 60px 60px;
-    background-position: 0 0, 30px 30px, 15px 45px, 45px 15px;
-    
-    /* Efek pikselasi retro agar tidak blur di layar HP */
-    image-rendering: pixelated; 
-    z-index: 1;
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px, 10px 30px, 30px 10px;
+    image-rendering: pixelated;
 }
 
-#game-container {
-    background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
-    z-index: 1;
-}
-
+/* Merapikan posisi papan skor di atas */
 #score-board {
-    position: absolute;
-    top: 20px;
-    font-size: 1.2rem;
+    position: relative;
+    margin-top: 25px;
+    font-size: 1.1rem;
     font-weight: bold;
     color: #333;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
     border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 5;
 }
 
+/* Merapikan posisi teks instruksi */
 #instruction {
-    position: absolute;
-    top: 70px;
+    position: relative;
+    margin-top: 10px;
     font-size: 0.9rem;
+    font-weight: 500;
     color: #555;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 4px 12px;
+    border-radius: 10px;
     text-align: center;
+    z-index: 5;
 }
 
 #game-area {
     width: 100%;
     height: 100%;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
 }
 
-/* Elemen Balon */
+/* --- ELEMEN BALON --- */
 .balloon {
     width: 60px;
     height: 75px;
@@ -162,7 +173,7 @@ body, html {
     100% { bottom: 105%; transform: translateX(-15px); }
 }
 
-/* Elemen Partikel */
+/* --- ELEMEN PARTIKEL PECAH --- */
 .particle {
     position: absolute;
     width: 8px;
@@ -177,12 +188,19 @@ body, html {
     100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
 }
 
-/* Tampilan Kartu Ucapan */
+/* --- LAYAR KARTU UCAPAN --- */
 #card-container {
-    background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
-    z-index: 10;
+    z-index: 200;
     display: flex;
+    align-items: center;
+    justify-content: center;
     opacity: 1;
     transition: opacity 0.5s ease;
 }
@@ -194,7 +212,7 @@ body, html {
     width: 85%;
     max-width: 350px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 .card h2 { color: #ff5e7e; margin-bottom: 15px; }
