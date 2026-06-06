@@ -1,8 +1,6 @@
-const startContainer = document.getElementById('start-container');
-const startBtn = document.getElementById('start-btn');
-const gameContainer = document.getElementById('game-container');
 const gameArea = document.getElementById('game-area');
 const scoreDisplay = document.getElementById('score');
+const gameContainer = document.getElementById('game-container');
 const cardContainer = document.getElementById('card-container');
 const celebrateBtn = document.getElementById('celebrate-btn');
 
@@ -10,36 +8,6 @@ let score = 0;
 const targetScore = 5;
 const colors = ['#ff5e7e', '#38ef7d', '#11998e', '#ff9f43', '#00d2d3'];
 let gameInterval;
-let gameStarted = false;
-
-// --- KONFIGURASI AUDIO ---
-const bgMusic = new Audio('https://assets.mixkit.co/active_storage/sfx/123/123-animated.wav'); 
-bgMusic.loop = true; 
-bgMusic.volume = 0.4; 
-
-const popSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-animated.wav');
-popSound.volume = 1.0; 
-
-function startGame() {
-    if (gameStarted) return;
-    gameStarted = true;
-
-    bgMusic.play().catch(error => console.log("Audio tertunda:", error));
-
-    // Slide up layar arcade pembuka
-    startContainer.classList.add('slide-up');
-    gameContainer.classList.remove('hidden');
-
-    setTimeout(() => {
-        gameInterval = setInterval(createBalloon, 1200);
-    }, 600);
-}
-
-startBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    startGame();
-});
-startBtn.addEventListener('click', startGame);
 
 function createBalloon() {
     if (score >= targetScore) {
@@ -50,59 +18,36 @@ function createBalloon() {
     const balloon = document.createElement('div');
     balloon.classList.add('balloon');
     
+    // Posisi horizontal acak agar muat di layar HP
     const randomX = Math.random() * (window.innerWidth - 70);
     balloon.style.left = `${randomX}px`;
     
+    // Warna acak
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
     balloon.style.backgroundColor = randomColor;
 
+    // Kecepatan melayang acak
     const randomSpeed = 3 + Math.random() * 3;
     balloon.style.animationDuration = `${randomSpeed}s`;
 
+    // Event saat balon diketuk (Touch & Click)
     balloon.addEventListener('touchstart', (e) => {
-        e.preventDefault(); 
-        popBalloon(balloon, randomX, balloon.offsetTop, randomColor);
+        e.preventDefault(); // Mencegah double click di HP
+        popBalloon(balloon);
     });
     balloon.addEventListener('mousedown', () => {
-        popBalloon(balloon, randomX, balloon.offsetTop, randomColor);
+        popBalloon(balloon);
     });
 
     gameArea.appendChild(balloon);
 
+    // Hapus balon jika lolos ke atas layar tanpa diketuk
     balloon.addEventListener('animationend', () => {
         balloon.remove();
     });
 }
 
-function createParticles(x, y, color) {
-    const particleCount = 12;
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        particle.style.backgroundColor = color;
-        particle.style.left = `${x + 30}px`; 
-        particle.style.top = `${y + 35}px`;
-
-        const destinationX = (Math.random() - 0.5) * 200 + 'px';
-        const destinationY = (Math.random() - 0.5) * 200 + 'px';
-        particle.style.setProperty('--x', destinationX);
-        particle.style.setProperty('--y', destinationY);
-
-        gameArea.appendChild(particle);
-
-        particle.addEventListener('animationend', () => {
-            particle.remove();
-        });
-    }
-}
-
-function popBalloon(balloon, x, y, color) {
-    popSound.currentTime = 0; 
-    popSound.play();
-
-    const currentY = balloon.getBoundingClientRect().top;
-    createParticles(x, currentY, color);
-
+function popBalloon(balloon) {
     balloon.remove();
     score++;
     scoreDisplay.textContent = score;
@@ -115,10 +60,14 @@ function popBalloon(balloon, x, y, color) {
 function endGame() {
     gameContainer.classList.add('hidden');
     cardContainer.classList.remove('hidden');
-    bgMusic.volume = 0.2; 
 }
 
+// Efek tambahan saat tombol di kartu ucapan diketuk
 celebrateBtn.addEventListener('click', () => {
     celebrateBtn.textContent = "Terima Kasih! ❤️";
     celebrateBtn.style.background = "#38ef7d";
+    // Di sini bisa ditambahkan efek konfeti jika diinginkan
 });
+
+// Mulai memunculkan balon setiap 1.2 detik
+gameInterval = setInterval(createBalloon, 1200);
