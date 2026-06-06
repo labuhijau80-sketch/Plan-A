@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    -webkit-user-select: none; /* Mencegah teks terseleksi di HP */
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -11,10 +11,79 @@ body, html {
     height: 100%;
     overflow: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f3f8;
+    background: #051605; /* Dasar gelap arcade */
 }
 
-/* Container Utama */
+/* --- STYLE LAYAR ARCADE RETRO (START SCREEN) --- */
+#start-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #0a1f0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.arcade-screen {
+    width: 90%;
+    max-width: 400px;
+    height: 80%;
+    max-height: 500px;
+    background: #33ff33; /* Warna hijau neon terang sesuai gambar */
+    border-radius: 30px;
+    box-shadow: 0 0 40px rgba(51, 255, 51, 0.6), inset 0 0 20px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    font-family: 'Press Start 2P', monospace; /* Menggunakan fon pixel */
+}
+
+.arcade-text {
+    color: #051605;
+    font-size: 2.2rem;
+    line-height: 1.5;
+    text-align: left;
+    width: 100%;
+    padding-left: 15px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#start-btn {
+    position: absolute;
+    right: 35px;
+    top: 48%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #051605;
+    font-size: 4.5rem;
+    font-family: 'Press Start 2P', monospace;
+    cursor: pointer;
+    font-weight: bold;
+    animation: blink 0.8s infinite alternate;
+}
+
+@keyframes blink {
+    0% { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+/* --- SCREEN TRANSITION EFFECT --- */
+#start-container.slide-up {
+    transform: translateY(-100%);
+}
+
+/* --- GAME AREA STYLE --- */
 #game-container, #card-container {
     width: 100%;
     height: 100%;
@@ -69,7 +138,6 @@ body, html {
     animation: floatUp 4s linear forwards;
 }
 
-/* Tali Balon */
 .balloon::after {
     content: "";
     position: absolute;
@@ -81,17 +149,24 @@ body, html {
 }
 
 @keyframes floatUp {
-    0% {
-        bottom: -100px;
-        transform: translateX(0);
-    }
-    50% {
-        transform: translateX(15px);
-    }
-    100% {
-        bottom: 105%;
-        transform: translateX(-15px);
-    }
+    0% { bottom: -100px; transform: translateX(0); }
+    50% { transform: translateX(15px); }
+    100% { bottom: 105%; transform: translateX(-15px); }
+}
+
+/* Elemen Partikel */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: explode 0.6s ease-out forwards;
+}
+
+@keyframes explode {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
 }
 
 /* Tampilan Kartu Ucapan */
@@ -112,20 +187,10 @@ body, html {
     max-width: 350px;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    transform: scale(1);
-    transition: transform 0.3s ease;
 }
 
-.card h2 {
-    color: #ff5e7e;
-    margin-bottom: 15px;
-}
-
-.card p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
+.card h2 { color: #ff5e7e; margin-bottom: 15px; }
+.card p { color: #666; line-height: 1.6; margin-bottom: 20px; }
 
 #celebrate-btn {
     background: #ff5e7e;
@@ -138,29 +203,6 @@ body, html {
     font-weight: bold;
 }
 
-/* --- ANIMASI PARTIKEL BALON PECAH --- */
-.particle {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    pointer-events: none; /* Supaya tidak mengganggu ketukan jari */
-    animation: explode 0.6s ease-out forwards;
-}
-
-@keyframes explode {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-    100% {
-        /* Nilai var(--x) dan var(--y) akan diisi acak oleh JavaScript */
-        transform: translate(var(--x), var(--y)) scale(0);
-        opacity: 0;
-    }
-}
-
-/* Sifat tersembunyi yang dipaksa di paling bawah agar tidak tertimpa */
 .hidden {
     display: none !important;
 }
