@@ -29,6 +29,7 @@ body, html {
 
 #game-container {
     background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+    z-index: 1;
 }
 
 #score-board {
@@ -137,6 +138,7 @@ body, html {
     font-weight: bold;
 }
 
+/* Sifat tersembunyi yang dipaksa di paling bawah agar tidak tertimpa */
 .hidden {
     display: none !important;
 }
