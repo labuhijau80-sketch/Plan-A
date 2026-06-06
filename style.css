@@ -138,6 +138,28 @@ body, html {
     font-weight: bold;
 }
 
+/* --- ANIMASI PARTIKEL BALON PECAH --- */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none; /* Supaya tidak mengganggu ketukan jari */
+    animation: explode 0.6s ease-out forwards;
+}
+
+@keyframes explode {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        /* Nilai var(--x) dan var(--y) akan diisi acak oleh JavaScript */
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+    }
+}
+
 /* Sifat tersembunyi yang dipaksa di paling bawah agar tidak tertimpa */
 .hidden {
     display: none !important;
