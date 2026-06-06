@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    -webkit-user-select: none;
+    -webkit-user-select: none; /* Mencegah teks terseleksi di HP */
     user-select: none;
 }
 
@@ -11,137 +11,52 @@ body, html {
     height: 100%;
     overflow: hidden;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #051605;
+    background: #f0f3f8;
 }
 
-/* --- STYLE LAYAR ARCADE RETRO (START SCREEN) --- */
-#start-container {
+/* Container Utama */
+#game-container, #card-container {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    background: #0a1f0a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-.arcade-screen {
-    width: 90%;
-    max-width: 400px;
-    height: 80%;
-    max-height: 500px;
-    background: #33ff33;
-    border-radius: 30px;
-    box-shadow: 0 0 40px rgba(51, 255, 51, 0.6), inset 0 0 20px rgba(0,0,0,0.4);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    font-family: 'Press Start 2P', monospace;
 }
 
-.arcade-text {
-    color: #051605;
-    font-size: 2.2rem;
-    line-height: 1.5;
-    text-align: left;
-    width: 100%;
-    padding-left: 15px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-#start-btn {
-    position: absolute;
-    right: 35px;
-    top: 48%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: #051605;
-    font-size: 4.5rem;
-    font-family: 'Press Start 2P', monospace;
-    cursor: pointer;
-    font-weight: bold;
-    animation: blink 0.8s infinite alternate;
-}
-
-@keyframes blink {
-    0% { opacity: 0.2; }
-    100% { opacity: 1; }
-}
-
-#start-container.slide-up {
-    transform: translateY(-100%);
-}
-
-/* --- AREA GAME & LATAR PERMEN --- */
 #game-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    background-color: #fce4ec; 
-    background-image: 
-        radial-gradient(#ff85a2 20%, transparent 20%),
-        radial-gradient(#b3e5fc 20%, transparent 20%),
-        radial-gradient(#ffe082 20%, transparent 20%),
-        radial-gradient(#c8e6c9 20%, transparent 20%);
-    background-size: 40px 40px;
-    background-position: 0 0, 20px 20px, 10px 30px, 30px 10px;
-    image-rendering: pixelated;
+    background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
 }
 
 #score-board {
-    position: relative;
-    margin-top: 25px;
-    font-size: 1.1rem;
+    position: absolute;
+    top: 20px;
+    font-size: 1.2rem;
     font-weight: bold;
     color: #333;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 16px;
     border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    z-index: 5;
-    text-align: center;
 }
 
 #instruction {
-    position: relative;
-    margin-top: 10px;
+    position: absolute;
+    top: 70px;
     font-size: 0.9rem;
-    font-weight: 500;
     color: #555;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 6px 16px;
-    border-radius: 10px;
     text-align: center;
-    z-index: 5;
 }
 
 #game-area {
     width: 100%;
     height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
+    position: relative;
 }
 
-/* --- ELEMEN BALON --- */
+/* Elemen Balon */
 .balloon {
     width: 60px;
     height: 75px;
@@ -153,6 +68,7 @@ body, html {
     animation: floatUp 4s linear forwards;
 }
 
+/* Tali Balon */
 .balloon::after {
     content: "";
     position: absolute;
@@ -164,40 +80,25 @@ body, html {
 }
 
 @keyframes floatUp {
-    0% { bottom: -100px; transform: translateX(0); }
-    50% { transform: translateX(15px); }
-    100% { bottom: 105%; transform: translateX(-15px); }
+    0% {
+        bottom: -100px;
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(15px);
+    }
+    100% {
+        bottom: 105%;
+        transform: translateX(-15px);
+    }
 }
 
-/* --- ELEMEN PARTIKEL PECAH --- */
-.particle {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: explode 0.6s ease-out forwards;
-}
-
-@keyframes explode {
-    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
-}
-
-/* --- LAYAR KARTU UCAPAN (GIVING CARD) --- */
+/* Tampilan Kartu Ucapan */
 #card-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(5px);
-    z-index: 200;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    z-index: 10;
+    display: flex;
     opacity: 1;
     transition: opacity 0.5s ease;
 }
@@ -209,11 +110,21 @@ body, html {
     width: 85%;
     max-width: 350px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transform: scale(1);
+    transition: transform 0.3s ease;
 }
 
-.card h2 { color: #ff5e7e; margin-bottom: 15px; }
-.card p { color: #666; line-height: 1.6; margin-bottom: 20px; }
+.card h2 {
+    color: #ff5e7e;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
 
 #celebrate-btn {
     background: #ff5e7e;
@@ -226,7 +137,6 @@ body, html {
     font-weight: bold;
 }
 
-/* --- LOGIKA MENYEMBUNYIKAN ELEMEN --- */
 .hidden {
     display: none !important;
 }
