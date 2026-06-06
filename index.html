@@ -4,26 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kartu Ucapan Interaktif</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="start-container">
-        <div class="arcade-screen">
-            <div class="arcade-text">
-                LET'S<br>PLAY A<br>GAME
-            </div>
-            <button id="start-btn">&gt;</button>
-        </div>
-    </div>
-
-    <div id="game-container" class="hidden">
+    <!-- Layar Game -->
+    <div id="game-container">
         <div id="score-board">Balon Terpecah: <span id="score">0</span>/5</div>
-        <div id="instruction">Ketuk balon untuk memecahkannya!</div>
+        <div id="instruction">Ketuk 5 balon untuk membuka ucapan!</div>
         <div id="game-area"></div>
     </div>
 
+    <!-- Layar Kartu Ucapan (Terbuka setelah game selesai) -->
     <div id="card-container" class="hidden">
         <div class="card">
             <h2>🎉 Selamat Ulang Tahun! 🎉</h2>
