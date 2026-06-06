@@ -29,7 +29,7 @@ body, html {
 
 #game-container {
     /* Masukkan Raw URL GitHub Anda di dalam tanda kutip tunggal di bawah ini */
-    background-image: url('https://raw.githubusercontent.com/labuhijau80-sketch/Plan-A/refs/heads/main/ini%20buat%20wallpaper.jpg');
+    background-image: url("./wallpaper.jpg");
     
     /* Pengaturan agar wallpaper rapi dan memenuhi layar game */
     background-size: cover;
