@@ -64,7 +64,7 @@ function endGame() {
 
 // Efek tambahan saat tombol di kartu ucapan diketuk
 celebrateBtn.addEventListener('click', () => {
-    celebrateBtn.textContent = "Terima Kasih! ❤️";
+    celebrateBtn.textContent = "Terima Kasih! ❤️ by Alip Jaya";
     celebrateBtn.style.background = "#38ef7d";
     // Di sini bisa ditambahkan efek konfeti jika diinginkan
 });
