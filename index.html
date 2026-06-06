@@ -3,26 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kartu Ucapan Interaktif</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Kejutan Ulang Tahun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* GLOBAL STYLES */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body { background-color: #1a1a1a; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; touch-action: manipulation; }
+        #app { width: 100vw; height: 100vh; position: relative; max-width: 800px; max-height: 600px; background: #000; box-shadow: 0 0 20px rgba(0,0,0,0.5); overflow: hidden; }
+        .screen { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .hidden { opacity: 0; pointer-events: none; z-index: -1; }
+
+        /* --- SCREEN 1: START (CRT ARCADE) --- */
+        #start-screen {
+            background-color: #1a361a;
+            font-family: 'VT323', monospace;
+            color: #55ff55;
+            text-shadow: 0 0 5px #55ff55, 0 0 10px #55ff55;
+            z-index: 10;
+        }
+        #start-screen::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+        .start-text-container { font-size: 3rem; text-align: left; display: flex; align-items: center; z-index: 5;}
+        .start-text { line-height: 1.2; }
+        .arrow { animation: blink 1s step-end infinite; cursor: pointer; padding-left: 15px; font-size: 3.5rem; }
+        .arrow:hover { color: #fff; text-shadow: 0 0 10px #fff; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* --- SCREEN 2: GAME --- */
+        #game-screen {
+            background-color: #f7e8cf; 
+            font-family: 'Press Start 2P', cursive;
+            padding: 20px;
+            cursor: crosshair;
+        }
+        .game-border {
+            width: 100%; height: 100%; border: 4px solid #333; background: #7cd4ff; position: relative; border-radius: 4px; overflow: hidden;
+        }
+        
+        /* Awan Pixel CSS */
+        .cloud { position: absolute; background: white; width: 60px; height: 20px; border-radius: 10px; opacity: 0.9; }
+        .cloud::before { content:''; position: absolute; background: white; width: 30px; height: 30px; border-radius: 50%; top: -15px; left: 10px; }
+        .cloud::after { content:''; position: absolute; background: white; width: 20px; height: 20px; border-radius: 50%; top: -10px; right: 10px; }
+        .c1 { top: 15%; left: 10%; animation: floatCloud 25s linear infinite; }
+        .c2 { top: 35%; right: 15%; animation: floatCloud 30s linear infinite reverse; }
+        .c3 { top: 10%; right: 40%; transform: scale(0.7); animation: floatCloud 35s linear infinite; }
+        @keyframes floatCloud { 0% { transform: translateX(0); } 50% { transform: translateX(30px); } 100% { transform: translateX(0); } }
+
+        /* UI Game */
+        .score-board { position: absolute; top: 15px; right: 15px; font-size: 1rem; color: #000; text-shadow: 2px 2px #fff; z-index: 5;}
+        .instruction-box {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: #fff; border: 4px solid #333; padding: 12px; width: 90%; text-align: center;
+            font-size: 0.7rem; color: #000; line-height: 1.5; z-index: 5; box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        
+        /* Balon */
+        .balloon {
+            position: absolute; width: 40px; height: 50px; border: 2px solid #000; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            cursor: crosshair; transition: transform 0.1s; display: flex; justify-content: center;
+            box-shadow: inset -5px -5px 0 rgba(0,0,0,0.2); animation: bobble 3s ease-in-out infinite;
+        }
+        .balloon::after {
+            content: ''; position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%);
+            border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 7px solid; border-bottom-color: inherit;
+        }
+        .string { position: absolute; width: 2px; height: 45px; background: #000; bottom: -48px; z-index: -1; }
+        @keyframes bobble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes pop { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+
+        /* Kucing Pixel (SVG Inline) */
+        .pixel-cat {
+            position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); width: 70px; height: 70px; z-index: 4;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f9a03f' d='M3 5h2v2H3zm8 0h2v2h-2zM4 7h8v5H4z'/%3E%3Cpath fill='%23000' d='M2 4h2v1H2zm10 0h2v1h-2zM4 5h1v2H4zm6 0h1v2h-1zM3 7h1v5H3zm8 0h1v5h-1zM4 12h8v1H4zM6 8h1v1H6zm3 0h1v1H9zM7 10h2v1H7z'/%3E%3Cpath fill='%23ff0044' d='M7 2h2v3H7z'/%3E%3Cpath fill='%23000' d='M8 1h1v1H8zM6 3h1v1H6zm3 0h1v1H9z'/%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat;
+        }
+
+        /* --- SCREEN 3: CARD --- */
+        #card-screen { background-color: #f7e8cf; font-family: 'Press Start 2P', cursive; padding: 20px; z-index: 20;}
+        .card-container {
+            background: #fff; border: 4px solid #333; width: 100%; height: 100%; border-radius: 4px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;
+            box-shadow: inset 0 0 0 8px #ffb6c1, inset 0 0 0 12px #333;
+        }
+        .card-title { font-size: 1.8rem; color: #ff0044; margin-bottom: 25px; text-shadow: 2px 2px #000; text-align: center; line-height: 1.5; z-index: 2;}
+        .card-msg { font-size: 0.8rem; color: #333; text-align: center; line-height: 2; max-width: 85%; z-index: 2;}
+        
+        /* Bunting (Bendera) */
+        .bunting { position: absolute; top: 15px; width: 100%; height: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 0l10 20L20 0H0zm20 0l10 20 10-20H20zm20 0l10 20 10-20H40zm20 0l10 20 10-20H60zm20 0l10 20 10-20H80z' fill='%23ffeb3b' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E"); background-size: contain; background-repeat: repeat-x; z-index: 1;}
+
+        /* Confetti Canvas */
+        #confetti { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+        /* RESPONSIVE Adjustments */
+        @media (max-width: 600px) {
+            .start-text-container { font-size: 2.2rem; }
+            .card-title { font-size: 1.3rem; }
+            .card-msg { font-size: 0.65rem; }
+            .instruction-box { font-size: 0.6rem; padding: 10px; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Layar Game -->
-    <div id="game-container">
-        <div id="score-board">Balon Terpecah: <span id="score">0</span>/5</div>
-        <div id="instruction">Ketuk 5 balon untuk membuka ucapan!</div>
-        <div id="game-area"></div>
-    </div>
 
-    <!-- Layar Kartu Ucapan (Terbuka setelah game selesai) -->
-    <div id="card-container" class="hidden">
-        <div class="card">
-            <h2>🎉 Selamat Ulang Tahun! 🎉</h2>
-            <p>Semoga di usia yang baru ini, kamu selalu diberikan kesehatan, kebahagiaan, dan kesuksesan dalam segala hal yang kamu impikan.</p>
-            <button id="celebrate-btn">Tiup Lilin! 🎂</button>
+<div id="app">
+    <div id="start-screen" class="screen">
+        <div class="start-text-container">
+            <div class="start-text">LET'S<br>PLAY A<br>GAME</div>
+            <div class="arrow" id="btn-start" onclick="startGame()">></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="game-screen" class="screen hidden">
+        <div class="game-border" id="game-area">
+            <div class="cloud c1"></div>
+            <div class="cloud c2"></div>
+            <div class="cloud c3"></div>
+            <div class="pixel-cat"></div>
+
+            <div class="score-board">BALON: <span id="score">0</span>/5</div>
+            <div class="instruction-box">
+                Pecahkan 5 balon untuk melihat kejutan!
+            </div>
+        </div>
+    </div>
+
+    <div id="card-screen" class="screen hidden">
+        <div class="card-container">
+            <canvas id="confetti"></canvas>
+            <div class="bunting"></div>
+            <h1 class="card-title">SELAMAT<br>ULANG TAHUN!</h1>
+            <p class="card-msg">
+                Semoga hari spesial ini dipenuhi dengan kebahagiaan, tawa, dan hadiah yang menyenangkan.<br><br>Teruslah bersinar! ✨
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* --- AUDIO SYNTHESIZER --- */
+    let audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+    function playBlip() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+    function playPop() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+    function playTada() {
+        if (!audioCtx) return;
+        const notes = [261.63, 329.63, 392.00, 523.25];
+        notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.3);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + i * 0.15); osc.stop(audioCtx.currentTime + i * 0.15 + 0.3);
+        });
+    }
+
+    /* --- GAME LOGIC --- */
+    let poppedCount = 0;
+    const totalBalloons = 5;
+    const balloonColors = ['#ff0044', '#33cc33', '#3399ff', '#ffcc00', '#cc33ff'];
+
+    function startGame() {
+        initAudio(); playBlip();
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        const gameArea = document.getElementById('game-area');
+        for (let i = 0; i < totalBalloons; i++) { createBalloon(gameArea, i); }
+    }
+
+    function createBalloon(container, index) {
+        const b = document.createElement('div');
+        b.className = 'balloon';
+        const color = balloonColors[index];
+        b.style.backgroundColor = color;
+        b.style.borderBottomColor = color; 
+        const leftPos = 10 + (index * 16) + Math.random() * 5; 
+        const topPos = 20 + Math.random() * 25;
+        b.style.left = leftPos + '%';
+        b.style.top = topPos + '%';
+        b.style.animationDelay = (Math.random() * 2) + 's';
+        
+        const string = document.createElement('div');
+        string.className = 'string';
+        b.appendChild(string);
+
+        b.addEventListener('mousedown', function() { popBalloon(b); });
+        b.addEventListener('touchstart', function(e) { e.preventDefault(); popBalloon(b); }, {passive: false});
+        container.appendChild(b);
+    }
+
+    function popBalloon(element) {
+        if (element.style.animationName === 'pop') return; 
+        playPop();
+        element.style.animation = 'pop 0.2s forwards';
+        poppedCount++;
+        document.getElementById('score').innerText = poppedCount;
+        setTimeout(() => { element.remove(); }, 200);
+        if (poppedCount === totalBalloons) { setTimeout(showCard, 800); }
+    }
+
+    function showCard() {
+        playTada();
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('card-screen').classList.remove('hidden');
+        startConfetti();
+    }
+
+    /* --- CONFETTI ANIMATION --- */
+    function startConfetti() {
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        const particles = [];
+        const colors = ['#ff0044', '#33cc33', '#3399ff', '#ffcc00', '#ffffff'];
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+                r: Math.random() * 6 + 2, dx: Math.random() * 4 - 2, dy: Math.random() * 5 + 2,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.color; ctx.fill();
+                p.x += p.dx; p.y += p.dy;
+                if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
+</script>
 </body>
 </html>
